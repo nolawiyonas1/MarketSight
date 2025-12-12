@@ -3,6 +3,8 @@ import shutil
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
+from redis import Redis
+from rq import Queue
 
 from . import models, schemas, crud, database
 
@@ -11,8 +13,15 @@ models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="MarketSight API")
 
-# Helper to get DB session
+# Dependency
 get_db = database.get_db
+
+# Setup Redis Connection
+# In Docker, the hostname is 'marketsight-redis' (from docker-compose)
+# We use os.getenv to allow fallback to localhost for local testing
+REDIS_HOST = os.getenv("REDIS_HOST", "marketsight-redis")
+redis_conn = Redis(host=REDIS_HOST, port=6379)
+task_queue = Queue("training_jobs", connection=redis_conn)
 
 # Ensure upload directory exists
 UPLOAD_DIR = "uploads"
@@ -35,6 +44,10 @@ def upload_file(file: UploadFile = File(...), db: Session = Depends(get_db)):
     # 2. Save job info to DB
     job_data = schemas.JobCreate(filename=file.filename, file_path=file_location)
     job = crud.create_job(db=db, job=job_data)
+
+    # 3. Add to Redis Queue
+    # We pass the job_id so the worker knows which DB row to update
+    task_queue.enqueue("app.worker.train_model", job.id)
     
     return job
 

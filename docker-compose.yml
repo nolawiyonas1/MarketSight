@@ -21,12 +21,15 @@ services:
     ports:
       - "6379:6379"              # Expose port so we can inspect it if needed
 
-  # 3. Worker Service (Coming soon in Phase 2)
-  # worker:
-  #   build: ./backend
-  #   command: python app/worker.py
-  #   volumes:
-  #     - ./backend:/app
-  #   depends_on:
-  #     - redis
-  #     - api
+  # 3. Worker Service (Phase 2)
+  worker:
+    build: ./backend
+    container_name: marketsight-worker
+    command: rq worker training_jobs --url redis://marketsight-redis:6379/0
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - redis
+      - api
+    environment:
+      - REDIS_HOST=marketsight-redis
