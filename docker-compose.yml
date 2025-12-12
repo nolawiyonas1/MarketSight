@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # 1. The API Service (FastAPI)
+  api:
+    build: ./backend              # Build the image from the backend/ folder
+    container_name: marketsight-api
+    ports:
+      - "8000:8000"              # Map localhost:8000 to container:8000
+    volumes:
+      - ./backend:/app           # Sync local code to container (hot-reload works!)
+    environment:
+      - REDIS_URL=redis://redis:6379/0  # API talks to 'redis' hostname
+    depends_on:
+      - redis                    # Wait for Redis to start first
+
+  # 2. Redis Service (Message Queue)
+  redis:
+    image: redis:7-alpine        # Official lightweight Redis image
+    container_name: marketsight-redis
+    ports:
+      - "6379:6379"              # Expose port so we can inspect it if needed
+
+  # 3. Worker Service (Coming soon in Phase 2)
+  # worker:
+  #   build: ./backend
+  #   command: python app/worker.py
+  #   volumes:
+  #     - ./backend:/app
+  #   depends_on:
+  #     - redis
+  #     - api
