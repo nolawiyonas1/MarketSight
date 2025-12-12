@@ -10,7 +10,9 @@ services:
     volumes:
       - ./backend:/app           # Sync local code to container (hot-reload works!)
     environment:
-      - REDIS_URL=redis://redis:6379/0  # API talks to 'redis' hostname
+      - REDIS_URL=redis://marketsight-redis:6379/0
+      # Allow the frontend to talk to us (CORS)
+      - FRONTEND_URL=${FRONTEND_URL}
     depends_on:
       - redis                    # Wait for Redis to start first
 
@@ -36,5 +38,18 @@ services:
       # AWS Credentials - Passed from the host computer
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_REGION=us-east-1
+      - AWS_REGION=${AWS_REGION}
       - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+
+  # 4. Frontend Service (Phase 4)
+  frontend:
+    build: ./frontend
+    container_name: marketsight-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Avoid overwriting node_modules with local empty folder
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - PORT=3000

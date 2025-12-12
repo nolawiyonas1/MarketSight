@@ -1,6 +1,7 @@
 import os
 import shutil
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 from redis import Redis
@@ -12,6 +13,18 @@ from . import models, schemas, crud, database
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(title="MarketSight API")
+
+# Allow Frontend to talk to Backend (CORS)
+# TODO: In production, set this to the real domain (e.g. https://marketsight.com)
+FRONTEND_URL = os.getenv("FRONTEND_URL")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[FRONTEND_URL],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Dependency
 get_db = database.get_db

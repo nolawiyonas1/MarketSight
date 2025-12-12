@@ -6,7 +6,4 @@ python-multipart
 python-dotenv
 redis
 rq
-pandas
-torch
-scikit-learn
 boto3

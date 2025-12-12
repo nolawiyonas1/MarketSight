@@ -16,11 +16,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first!
-# Docker caches layers. If requirements don't change, it skips pip install.
-COPY requirements.txt .
+# OPTIMIZATION: Split requirements into core (heavy) and app (light).
+# This prevents re-downloading PyTorch (1GB+) every time we add a small library like boto3.
 
-# Install dependencies
+# 1. Install Heavy Dependencies (Cached Layer)
+COPY requirements-core.txt .
+RUN pip install --no-cache-dir -r requirements-core.txt
+
+# 2. Install App Dependencies (Frequent Changes)
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application code
