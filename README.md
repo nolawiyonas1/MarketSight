@@ -30,7 +30,7 @@ The system is containerized with **Docker** and orchestrated by **Kubernetes**. 
 
 ---
 
-## ☁️ Infrastructure & DevOps
+## ☁️ Infrastructure
 
 *   **AWS EC2 & S3:** Hosting for the application logic and object storage for model files.
 *   **Kubernetes:** Manages deployment, scaling, and self-healing of containers.
