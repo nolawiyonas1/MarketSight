@@ -1,6 +1,12 @@
-# 📈 MarketSight
+# 📈 MarketSight (in progress👷🏽‍♂️)
 
 MarketSight handles AI training workloads using an asynchronous queue-worker architecture. It decouples the API from the training process, ensuring the application remains responsive even during heavy computation.
+
+---
+
+## 🚀 Project Goal
+
+This project demonstrates a production-grade **MLOps** pipeline. It bridges the gap between training a model in a notebook and deploying a scalable, automated system that can serve users reliably.
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue?style=for-the-badge&logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.0-red?style=for-the-badge&logo=pytorch&logoColor=white)
@@ -47,9 +53,3 @@ The model predicts closing stock prices based on four input features: *Open, Hig
 *   **Optimization:** Stochastic Gradient Descent (SGD).
 *   **Loss Function:** Mean Squared Error (MSE).
 *   **Preprocessing:** Min-Max Scaling [0, 1].
-
----
-
-## 🚀 Project Goal
-
-This project demonstrates a production-grade **MLOps** pipeline. It bridges the gap between training a model in a notebook and deploying a scalable, automated system that can serve users reliably.
