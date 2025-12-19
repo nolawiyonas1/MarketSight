@@ -1,7 +1,5 @@
 # 📈 MarketSight
 
-**A distributed Machine Learning pipeline for stock price prediction, built with FastAPI, PyTorch, Kubernetes, and AWS.**
-
 MarketSight handles AI training workloads using an asynchronous queue-worker architecture. It decouples the API from the training process, ensuring the application remains responsive even during heavy computation.
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue?style=for-the-badge&logo=python&logoColor=white)
