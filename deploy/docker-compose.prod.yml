@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # API Service
+  api:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: marketsight-api
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://marketsight-redis:6379/0
+      - FRONTEND_URL=${FRONTEND_URL}
+    depends_on:
+      - redis
+    restart: always
+
+  # Redis Service
+  redis:
+    image: redis:7-alpine
+    container_name: marketsight-redis
+    expose:
+      - "6379"
+    restart: always
+    volumes:
+      - redis_data:/data
+
+  # Worker Service
+  worker:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: marketsight-worker
+    command: rq worker training_jobs --url redis://marketsight-redis:6379/0
+    depends_on:
+      - redis
+      - api
+    environment:
+      - REDIS_HOST=marketsight-redis
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+    restart: always
+
+  # Frontend Service
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    container_name: marketsight-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    restart: always
+
+volumes:
+  redis_data:
