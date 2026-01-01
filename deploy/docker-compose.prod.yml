@@ -4,7 +4,7 @@ services:
   # API Service
   api:
     build: 
-      context: ./backend
+      context: ../backend
       dockerfile: Dockerfile
     container_name: marketsight-api
     ports:
@@ -29,7 +29,7 @@ services:
   # Worker Service
   worker:
     build: 
-      context: ./backend
+      context: ../backend
       dockerfile: Dockerfile
     container_name: marketsight-worker
     command: rq worker training_jobs --url redis://marketsight-redis:6379/0
@@ -47,7 +47,7 @@ services:
   # Frontend Service
   frontend:
     build: 
-      context: ./frontend
+      context: ../frontend
       dockerfile: Dockerfile.prod
       args:
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
