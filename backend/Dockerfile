@@ -21,11 +21,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 1. Install Heavy Dependencies (Cached Layer)
 COPY requirements-core.txt .
-RUN pip install --no-cache-dir -r requirements-core.txt
+# Combine install and cleanup in one step to reduce layer size
+RUN pip install --no-cache-dir -r requirements-core.txt && \
+    rm -rf /root/.cache/pip
 
 # 2. Install App Dependencies (Frequent Changes)
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && \
+    rm -rf /root/.cache/pip
 
 # Copy the rest of the application code
 COPY . .

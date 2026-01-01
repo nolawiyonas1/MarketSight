@@ -1,3 +1,4 @@
-torch
+# Use CPU-only PyTorch to save space (no GPU on t2.small)
+torch --index-url https://download.pytorch.org/whl/cpu
 pandas
 scikit-learn
