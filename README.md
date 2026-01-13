@@ -1,4 +1,4 @@
-# 📈 MarketSight (in progress...)
+# 📈 MarketSight
 
 MarketSight handles AI training workloads using an asynchronous queue-worker architecture. It decouples the API from the training process, ensuring the application remains responsive even during heavy computation.
 
